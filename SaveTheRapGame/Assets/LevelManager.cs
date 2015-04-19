@@ -7,23 +7,37 @@ public class LevelManager : MonoBehaviour {
 	public Rapper rapper;
 	public RapInput input;
 	
+	public int scorePlayer = 0;
+	public int scoreEnemy = 0;
+	
 	float timeElapsed = 0;
-	float lastTime = 0;
+	float lastTime = -1;
 	
 	float beatTime = 0;
 	int discreetBeat = 0;
+	
+	float nextType = 0;
+	public int enemyTypeStep = 0;
+	
+	int verse = 0;
 
-	enum State {
+	public enum State {
 		Dialogue,
+		CountDown,
 		Typing,
 		Ending
 	}
 	
-	State currentState = State.Typing;
+	public enum TurnState {
+		PlayerTurn,
+		EnemyTurn
+	}
+	
+	public TurnState currentTurn = TurnState.PlayerTurn;
+	public State currentState = State.Typing;
 
 	// Use this for initialization
 	void Start () {
-	
 	}
 	
 	// Update is called once per frame
@@ -31,18 +45,62 @@ public class LevelManager : MonoBehaviour {
 		if (currentState == State.Typing) {
 			timeElapsed += Time.fixedDeltaTime;
 			beatTime = timeElapsed % (60.0f / bpm);
-			if (lastTime > beatTime) {
+			
+			if (currentTurn == TurnState.EnemyTurn) {
+				// typing for the enemy
+				if (nextType > ((60.0f / bpm) / 10) && enemyTypeStep <= rapper.GetCurrentLine().Length) {
+					nextType = 0;
+					if (Random.Range(0, 100) < rapper.messUpProbability) {
+						scoreEnemy -= 5;
+						ScoreUpdate();
+						enemyTypeStep = 0;
+					} else {
+						enemyTypeStep++;
+					}
+				}
+			}
+			
+			nextType += Time.fixedDeltaTime;
+			
+			// beats and stuff
+			if (lastTime > beatTime || lastTime == -1) {
+				// "bump" the circle
 				GetComponent<Animator>().speed = 1/((60.0f / bpm) * 4);
 				GetComponent<Animator>().SetTrigger("bump");
-				discreetBeat ++;
 				
 				if (discreetBeat % 4 == 0) {
+					// move the circle in a line
 					GetComponent<Animator>().speed = 1/((60.0f / bpm) * 4);
 					GetComponent<Animator>().SetTrigger("line");
-					BeatUpdate();
 					
+					if (rapper.GetCurrentLine() != "") {
+						if (currentTurn == TurnState.PlayerTurn) {
+							if (Compare()) {
+								scorePlayer += 10;
+								ScoreUpdate();
+							}
+						} else {
+							scoreEnemy += 10;
+							ScoreUpdate();
+						}
+					}
+					
+					BeatUpdate();
 					rapper.GoToNextLine();
+					
+					// after 4 verses, switch turns.
+					if (verse % 4 == 0 && verse != 0) {
+						if (currentTurn == TurnState.PlayerTurn) {
+							currentTurn = TurnState.EnemyTurn;
+						} else {
+							currentTurn = TurnState.PlayerTurn;
+						}
+					}
+					
+					verse++;
 				}
+				
+				discreetBeat ++;
 			}
 			
 			lastTime = beatTime;
@@ -50,7 +108,11 @@ public class LevelManager : MonoBehaviour {
 	}
 	
 	void BeatUpdate() {
+		enemyTypeStep = 0;
 		input.ResetRapString();
+	}
+	
+	public void ScoreUpdate() {
 	}
 	
 	public bool ComparePartial() {
