@@ -119,7 +119,7 @@ public class LevelManager : MonoBehaviour {
 		int len = input.GetRapString().Length;
 		int len2 = rapper.GetCurrentLine().Length;
 		if (len > len2) return false;
-		return input.GetRapString() == rapper.GetCurrentLine().Substring(0, len);
+		return input.GetRapString().ToLower() == rapper.GetCurrentLine().Substring(0, len).ToLower();
 	}
 	
 	public bool Compare() {

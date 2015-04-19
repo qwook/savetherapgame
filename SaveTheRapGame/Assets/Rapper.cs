@@ -12,6 +12,9 @@ public class Rapper : MonoBehaviour {
 		"spit it out inside the flow",
 		"keep it up, grind it up yo"
 	};
+
+	private string[] words;
+	public TextAsset lyrics;
 	
 	int lineNo = -1;
 	
@@ -29,11 +32,13 @@ public class Rapper : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-	
+		string text = lyrics.text;
+		char[] delimiters = {'\n'};
+		verses = text.Split (delimiters);
 	}
 	
 	// Update is called once per frame
 	void Update () {
-	
+
 	}
 }
