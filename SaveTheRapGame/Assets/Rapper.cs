@@ -3,18 +3,20 @@ using System.Collections;
 
 public class Rapper : MonoBehaviour {
 
+	public float messUpProbability = 0.0f;
+
 	public string[] verses = new string[] {
-		"stop",
-		"drop",
-		"roll",
-		"flip it",
-		"yo"
+		"stop, drop roll",
+		"get it in before the troll",
+		"split it up before you go",
+		"spit it out inside the flow",
+		"keep it up, grind it up yo"
 	};
 	
-	int lineNo = 0;
+	int lineNo = -1;
 	
 	public string GetCurrentLine() {
-//		return verses[lineNo] || "";
+		if (lineNo < 0 || lineNo >= verses.Length) return "";
 		return verses[lineNo];
 	}
 	

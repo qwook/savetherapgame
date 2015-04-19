@@ -16,8 +16,17 @@ public class RapText : MonoBehaviour {
 		TextMesh filledIn = transform.FindChild("Filled In Text").GetComponent<TextMesh>();
 		TextMesh toFillIn = transform.FindChild("To Fill-In Text").GetComponent<TextMesh>();
 		
-		filledIn.text = input.GetRapString();
 		toFillIn.text = rapper.GetCurrentLine();
+		
+		LevelManager lvlMgr = (LevelManager) FindObjectOfType(typeof(LevelManager));
+		
+		if (lvlMgr.currentTurn == LevelManager.TurnState.PlayerTurn) {
+			filledIn.text = input.GetRapString();
+			
+		} else {
+			string curLine = rapper.GetCurrentLine();
+			filledIn.text = curLine.Substring(0, Mathf.Min(curLine.Length, lvlMgr.enemyTypeStep));
+		}
 	}
 	
 }

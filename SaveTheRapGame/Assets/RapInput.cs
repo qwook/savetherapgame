@@ -15,6 +15,8 @@ public class RapInput : MonoBehaviour {
 		
 		LevelManager lvlMgr = (LevelManager) FindObjectOfType(typeof(LevelManager));
 		if ( !lvlMgr.ComparePartial() ) {
+			lvlMgr.scorePlayer -= 10;
+			lvlMgr.ScoreUpdate();
 			ResetRapString();
 		}
 	}
@@ -29,7 +31,7 @@ public class RapInput : MonoBehaviour {
 	
 	void Update() {
 		
-		foreach (string key in new string[] {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"}) {
+		foreach (string key in new string[] {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", ".", ","}) {
 			
 			if (Input.GetKeyDown(key)) {
 				InputRapKey(key);
